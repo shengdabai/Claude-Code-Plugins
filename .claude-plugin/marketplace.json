@@ -1,0 +1,57 @@
+{
+  "name": "tony",
+  "owner": {
+    "name": "Tony Sheng",
+    "url": "https://github.com/shengdabai"
+  },
+  "metadata": {
+    "description": "Daily-use Claude Code plugins: devflow process guard, decision tracker, and the secret-shield / tony-cockpit mods",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "devflow",
+      "source": "./devflow",
+      "description": "Tony 个人产品开发流程守门员：说开发 / 编程 / 写代码 / 做产品 / 上线就按「模式 → 入口 → 能力勾选 → 三道门 → 9 阶段」执行，偏离或触碰已知事故命令时提醒或阻断。真源 skills/devflow/SKILL.md，Codex 软链共用。",
+      "version": "0.2.0",
+      "author": {
+        "name": "Tony",
+        "url": "https://github.com/shengdabai"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "decision-tracker",
+      "source": "./decision-tracker",
+      "description": "记录和跟踪个人重大决策。当用户说\"记决策\"、\"记个决策\"、\"决策跟踪\"、\"回填\"、\"decision\",或描述一个刚做的/正在考虑的重大决策(创业/事业/财务/人生)并希望系统化记录与复盘时使用。自动四层拆解(原始信息/决策事实/假设推断/结果验证),生成 2 个文件,维护索引与行为模式库,并在记新决策时用历史教训主动拦截。",
+      "version": "0.1.0",
+      "author": {
+        "name": "Tony",
+        "url": "https://github.com/shengdabai"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "secret-shield",
+      "source": "./secret-shield",
+      "description": "Claude Code mod：工具输出(Bash / Read / MCP / WebFetch 等)写进对话前,把高置信度凭据替换成占位符,模型读到的是遮蔽版,界面仍显示原文。/secret-shield on|off|status 控制本会话开关。",
+      "version": "0.1.0",
+      "author": {
+        "name": "Tony",
+        "url": "https://github.com/shengdabai"
+      },
+      "license": "MIT"
+    },
+    {
+      "name": "tony-cockpit",
+      "source": "./tony-cockpit",
+      "description": "Claude Code mod：输入框上方显示当前项目 .omc/plans 未完成 ledger 的进度和下一项；/ledger 打开侧栏列出本项目与 ~/.omc/plans 近 7 天的未完成项；上下文用到 80% 时 toast 提醒 compact 前落盘现场。",
+      "version": "0.1.0",
+      "author": {
+        "name": "Tony",
+        "url": "https://github.com/shengdabai"
+      },
+      "license": "MIT"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+.DS_Store
+*.log
+.env*
+!.env.example
+!.env.*.example
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa
+id_dsa
+.npmrc
+node_modules/
+.omc/
+.codex/
+.claude/local/
+ruvector.db
+# 已废弃 plugin（gbrain 于 2026-06-17 卸载，物理文件保留但不跟踪）
+setup-gbrain/
+# 运行时状态文件（plugin 执行时生成，不应进入 git）
+**/.state.json
+**/*-todo.md
+**/.pipeline-state.json
+*.state.json
+*-todo.md
+.pipeline-state.json

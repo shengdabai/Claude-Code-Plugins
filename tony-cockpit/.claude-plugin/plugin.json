@@ -1,0 +1,12 @@
+{
+  "name": "tony-cockpit",
+  "version": "0.1.0",
+  "description": "Claude Code mod：输入框上方显示当前项目 .omc/plans 未完成 ledger 的进度和下一项；/ledger 打开侧栏列出本项目与 ~/.omc/plans 近 7 天的未完成项；上下文用到 80% 时 toast 提醒 compact 前落盘现场。",
+  "author": {
+    "name": "Tony",
+    "url": "https://github.com/shengdabai"
+  },
+  "license": "MIT",
+  "keywords": ["mod", "ledger", "session-resilience", "context"],
+  "types": "./types/index.d.ts"
+}

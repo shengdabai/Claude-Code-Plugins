@@ -1,0 +1,11 @@
+{
+  "name": "devflow",
+  "version": "0.3.0",
+  "description": "Tony 个人产品开发流程守门员。用户提到开发、编程、写代码、做产品、上线、部署等意图时自动按「入口分流 → 执行配置 → 三道门 → 9 阶段」流程执行，并在偏离流程或触碰已知事故命令时提醒或阻断；发布前必须先过 launch-check 上线前检查。真源：skills/devflow/SKILL.md，与 Codex 侧软链共用。",
+  "author": {
+    "name": "Tony",
+    "url": "https://github.com/shengdabai"
+  },
+  "license": "MIT",
+  "keywords": ["workflow", "product-development", "vibe-coding", "guardrail"]
+}

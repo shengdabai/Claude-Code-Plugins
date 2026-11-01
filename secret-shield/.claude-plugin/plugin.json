@@ -1,0 +1,12 @@
+{
+  "name": "secret-shield",
+  "version": "0.1.0",
+  "description": "Claude Code mod：工具输出(Bash / Read / MCP / WebFetch 等)写进对话前,把高置信度凭据替换成占位符,模型读到的是遮蔽版,界面仍显示原文。/secret-shield on|off|status 控制本会话开关。",
+  "author": {
+    "name": "Tony",
+    "url": "https://github.com/shengdabai"
+  },
+  "license": "MIT",
+  "keywords": ["mod", "security", "secrets", "redaction"],
+  "types": "./types/index.d.ts"
+}
