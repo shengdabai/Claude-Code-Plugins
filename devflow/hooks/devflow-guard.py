@@ -8,6 +8,7 @@ deny 只用于「已确认会造成事故且有明确替代」的模式；不确
 import json
 import os
 import re
+import shlex
 import sys
 
 
@@ -24,6 +25,20 @@ def out(decision=None, reason="", ctx=""):
 QUOTED = re.compile(r"^\s*(echo|printf|grep|rg|cat|sed\s+-n|less|head|tail|man)\b")
 
 
+def is_plain_read(command):
+    """Only exempt a single read command, never shell composition or expansion."""
+    if not QUOTED.match(command):
+        return False
+    if any(mark in command for mark in ("\n", "`", "$(")):
+        return False
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|<>()")
+        lexer.whitespace_split = True
+        return not any(token and all(c in ";&|<>()" for c in token) for token in lexer)
+    except ValueError:
+        return False
+
+
 def main():
     if os.environ.get("DEVFLOW_OFF") == "1":
         return
@@ -37,7 +52,7 @@ def main():
     if not c:
         return
     # 纯引用语境（echo / grep / cat 只读，且没有重定向写入）不触发
-    if QUOTED.match(c) and not re.search(r"(?<!2)>{1,2}\s*[^&]", c):
+    if is_plain_read(c):
         return
 
     # #2 裸 vercel link：ask（缺目标不等于一定错，但本机踩过坑）
