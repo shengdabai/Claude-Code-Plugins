@@ -14,8 +14,10 @@ echo "devflow-scan: 扫描 $(echo "$FILES" | wc -l | tr -d ' ') 个文件（${SR
 HITS=0
 while IFS= read -r f; do
   [ -f "$f" ] || continue
-  if grep -nE "$PAT" "$f" >/dev/null 2>&1; then
-    grep -nE "$PAT" "$f" | sed "s|^|$f:|" | head -20
+  if grep -nE "$PAT" -- "$f" >/dev/null 2>&1; then
+    grep -nE "$PAT" -- "$f" | head -20 | while IFS= read -r line; do
+      printf '%s:%s\n' "$f" "$line"
+    done
     HITS=$((HITS+1))
   fi
 done <<< "$FILES"
