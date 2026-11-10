@@ -43,6 +43,19 @@ describe('ledger 解析', () => {
 })
 
 describe('Codex 审核回归（解析）', () => {
+  test('围栏只能由同类且不短于开头的独立围栏关闭', async () => {
+    for (const fence of ['````', '~~~~']) {
+      const short = fence.slice(1)
+      const p = parseLedger([
+        '- [ ] 真任务', fence + 'md', short, '- [ ] 示例一',
+        fence + 'still code', '- [x] 示例二', fence, '- [x] 已完成',
+      ].join('\n'))
+      expect(p.total).toBe(2)
+      expect(p.done).toBe(1)
+      expect(p.open).toEqual(['真任务'])
+    }
+  })
+
   test('代码围栏里的示例任务不计数', async () => {
     const p = parseLedger(['- [ ] 真任务', '```md', '- [ ] 示例', '- [x] 示例', '```', '~~~', '- [ ] 也是示例', '~~~'].join('\n'))
     expect(p.total).toBe(1)

@@ -18,8 +18,8 @@ export function parseLedger(md: string): Parsed {
     const f = FENCE.exec(line)
     if (f) {
       const mark = f[1] ?? ''
-      if (!fence) fence = mark[0] ?? ''
-      else if (mark[0] === fence) fence = ''
+      if (!fence) fence = mark
+      else if (mark[0] === fence[0] && mark.length >= fence.length && !line.slice(f[0].length).trim()) fence = ''
       continue
     }
     if (fence) continue
