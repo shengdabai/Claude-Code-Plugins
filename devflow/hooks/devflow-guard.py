@@ -39,6 +39,52 @@ def is_plain_read(command):
         return False
 
 
+def normalized_git_commands(command):
+    """Skip known Git global options and their values before matching push."""
+    value_options = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env", "--super-prefix"}
+    flag_options = {
+        "-p", "--paginate", "-P", "--no-pager", "--bare", "--no-replace-objects",
+        "--no-lazy-fetch", "--no-optional-locks", "--no-advice", "--literal-pathspecs",
+        "--glob-pathspecs", "--noglob-pathspecs", "--icase-pathspecs",
+    }
+    punctuation = ";&|<>()`\n"
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=punctuation)
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        tokens = list(lexer)
+    except ValueError:
+        return []
+
+    normalized = []
+    for start, token in enumerate(tokens):
+        if token.rsplit("/", 1)[-1] != "git":
+            continue
+        i = start + 1
+        while i < len(tokens):
+            option = tokens[i]
+            if option in value_options:
+                i += 2
+            elif (option.startswith(("-C", "-c")) and len(option) > 2
+                  or "=" in option and option.split("=", 1)[0] in value_options
+                  or option.startswith("--exec-path=")):
+                i += 1
+            elif option in flag_options:
+                i += 1
+            else:
+                break
+        # Unknown options and other subcommands must not turn into a push.
+        if i == start + 1 or i >= len(tokens) or tokens[i] != "push":
+            continue
+        end = i + 1
+        while end < len(tokens) and not (
+            tokens[end] and all(c in punctuation for c in tokens[end])
+        ):
+            end += 1
+        normalized.append("git " + " ".join(tokens[i:end]))
+    return normalized
+
+
 def main():
     if os.environ.get("DEVFLOW_OFF") == "1":
         return
@@ -70,8 +116,12 @@ def main():
         out(ctx="【devflow 提醒】migrations apply 前：远端 d1_migrations 表记录与本地一致？恢复点已建？迁移表为空的旧项目不要 apply。")
         return
 
+    # Keep legacy matching; also inspect argv with Git global options removed.
+    git_commands = [c, *normalized_git_commands(c)]
+
     # force push 到主分支
-    if re.search(r"\bgit\s+push\b.*(--force\b|-f\b|--force-with-lease\b)", c) and re.search(r"\b(main|master)\b", c):
+    if any(re.search(r"\bgit\s+push\b.*(--force\b|-f\b|--force-with-lease\b)", command)
+           and re.search(r"\b(main|master)\b", command) for command in git_commands):
         out("deny", "【devflow 拉回】禁止 force push 到 main/master。回滚用 git revert。")
         return
 
@@ -87,7 +137,7 @@ def main():
         return
 
     # #14 git push 提醒
-    if re.search(r"\bgit\s+push\b", c):
+    if any(re.search(r"\bgit\s+push\b", command) for command in git_commands):
         out(ctx="【devflow 提醒】push 前检查本次将推送的提交范围（不只工作区）：无明文密钥；公开仓已脱敏（真名 / 绝对路径 / 内部 endpoint）。")
         return
 
