@@ -53,6 +53,37 @@ describe('redact', () => {
     expect(r.text).toContain('postgres://admin:[REDACTED:url-password')
     expect(r.text).toContain('Bearer [REDACTED:bearer')
   })
+
+  test('明确凭据字段不要求同时包含字母和数字', async () => {
+    const values = ['q'.repeat(32), '7'.repeat(32)]
+    for (const value of values) {
+      for (const input of [
+        `Authorization: Bearer ${value}`,
+        `Authorization: Basic ${value}`,
+        `Authorization: bearer ${value}`,
+        `Authorization: bAsIc ${value}`,
+        `postgres://admin:${value}@db.local/x`,
+        `DB_PASSWORD=${value}`,
+        `{"password":"${value}"}`,
+      ]) {
+        const r = redact(input)
+        expect(r.hits).toBe(1)
+        expect(r.text).not.toContain(value)
+      }
+    }
+  })
+
+  test('JSON 字段里的变量引用保持原样', async () => {
+    const input = '{"password":"${DB_PASSWORD_FROM_VAULT}"}'
+    expect(redact(input).text).toBe(input)
+  })
+
+  test('密码以美元符号开头时仍遮蔽', async () => {
+    const password = '$' + 'q'.repeat(32)
+    for (const input of [`postgres://admin:${password}@db.local/x`, `{"password":"${password}"}`]) {
+      expect(redact(input).text).not.toContain(password)
+    }
+  })
 })
 
 describe('Codex 审核回归', () => {

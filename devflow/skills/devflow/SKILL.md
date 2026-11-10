@@ -5,7 +5,7 @@ description: Tony 的个人产品开发流程（入口分流 → 能力勾选 �
 
 # devflow v0.2 — 按专业流程做产品，偏离就拉回
 
-规则版本 `DF-2026.10.23-1`（本版新增：发布前必须先过 `launch-check` 上线前检查；阶段 2 / 3 / 5 / 9 加入供应链、密钥、AI 代理权限要求；失败根因 #26–#28）。本文件是流程真源：Claude Code 插件与 Codex 共读同一份；ChatGPT / Claude 客户端用 `client-instructions/`（由 `scripts/build-client-instructions.py` 从本文件的 CLIENT 段生成，禁止手改）。可视化指南：<repo>��发流程指南.html`。
+规则版本 `DF-2026.10.23-1`（本版新增：发布前必须先过 `launch-check` 上线前检查；阶段 2 / 3 / 5 / 9 加入供应链、密钥、AI 代理权限要求；失败根因 #26–#28）。本文件是流程真源：Claude Code 插件与 Codex 共读同一份；ChatGPT / Claude 客户端用 `client-instructions/`（由 `scripts/build-client-instructions.py` 从本文件的 CLIENT 段生成，禁止手改）。可视化指南未包含在本仓库中。
 
 ## DF-00 先定模式，再决定要不要动手
 

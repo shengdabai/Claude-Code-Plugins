@@ -13,7 +13,7 @@
       "name": "devflow",
       "source": "./devflow",
       "description": "Tony 个人产品开发流程守门员：说开发 / 编程 / 写代码 / 做产品 / 上线就按「模式 → 入口 → 能力勾选 → 三道门 → 9 阶段」执行，偏离或触碰已知事故命令时提醒或阻断。真源 skills/devflow/SKILL.md，Codex 软链共用。",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "author": {
         "name": "Tony",
         "url": "https://github.com/shengdabai"

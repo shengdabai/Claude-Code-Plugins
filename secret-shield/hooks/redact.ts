@@ -11,11 +11,10 @@ type Rule = {
   accept?: (value: string) => boolean
 }
 
-const hasDigitAndLetter = (v: string) => /\d/.test(v) && /[A-Za-z]/.test(v)
 const hasUpperAndDigit = (v: string) => /\d/.test(v) && /[A-Z]/.test(v)
 
 // 明显是占位符、变量引用或已遮蔽的值
-const PLACEHOLDER = /^(?:your|xxx|<|\*|placeholder|changeme|example|dummy|redacted|\[redacted)/i
+const PLACEHOLDER = /^(?:your|xxx|<|\*|\$\{[A-Za-z_][A-Za-z0-9_]*\}$|placeholder|changeme|example|dummy|redacted|\[redacted)/i
 
 export const RULES: Rule[] = [
   { kind: 'anthropic', re: /\bsk-ant-[A-Za-z0-9_-]{24,}/g },
@@ -38,23 +37,22 @@ export const RULES: Rule[] = [
   { kind: 'stripe', re: /\b[rs]k_live_[0-9A-Za-z]{24,}/g },
   { kind: 'jwt', re: /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/g },
   // 以下只替换值，保留前缀
-  { kind: 'bearer', re: /(\bBearer\s+)([A-Za-z0-9._~+/-]{24,}=*)/g, hasPrefix: true, accept: hasDigitAndLetter },
-  { kind: 'basic-auth', re: /(\bBasic\s+)([A-Za-z0-9+/]{16,}={0,2})/g, hasPrefix: true, accept: hasDigitAndLetter },
+  // 明确凭据上下文不依赖字符熵：合法密码、token 和 Base64 都可能没有数字。
+  { kind: 'bearer', re: /(\bBearer\s+)([A-Za-z0-9._~+/-]{24,}=*)/gi, hasPrefix: true },
+  { kind: 'basic-auth', re: /(\bBasic\s+)([A-Za-z0-9+/]{16,}={0,2})/gi, hasPrefix: true },
   // scheme / 用户名 / 密码都给上限，否则长串 [a-z0-9.-] 会让每个起点回溯到底（O(n²)）
-  { kind: 'url-password', re: /(\b[a-z][a-z0-9+.-]{0,15}:\/\/[^\s:/@]{1,128}:)([^\s@/]{6,256})(?=@)/g, hasPrefix: true, accept: hasDigitAndLetter },
+  { kind: 'url-password', re: /(\b[a-z][a-z0-9+.-]{0,15}:\/\/[^\s:/@]{1,128}:)([^\s@/]{6,256})(?=@)/g, hasPrefix: true },
   // .env / shell 行：变量名必须以敏感段结尾（_KEY / _SECRET / _TOKEN / _PASSWORD），PUBLIC_KEY 除外
   {
     kind: 'env-secret',
     re: /^(\s*(?:export\s+)?(?![A-Z0-9_]*PUBLIC_KEY\b)(?:[A-Z][A-Z0-9_]*_)?(?:KEY|SECRET|TOKEN|PASSWORD|PASSWD)\s*(?:=|:\s)\s*["']?)([^\s"'$]{12,})/gm,
     hasPrefix: true,
-    accept: hasDigitAndLetter,
   },
   // JSON / YAML / 代码里带引号的敏感字段值
   {
     kind: 'json-secret',
     re: /(["']?(?:api[_-]?key|access[_-]?token|refresh[_-]?token|auth[_-]?token|client[_-]?secret|secret[_-]?key|private[_-]?key|password)["']?\s*[:=]\s*["'])([^"'\s]{12,})(?=["'])/gi,
     hasPrefix: true,
-    accept: hasDigitAndLetter,
   },
 ]
 
